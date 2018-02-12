@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Busbooking</title>
+    <title>BBK Control Panel</title>
     <link rel="stylesheet" href="browser.css" type="text/css">
 </head>
 
@@ -14,29 +14,31 @@
 </div>
 <script>
     const {ipcRenderer} = require('electron');
-    const config = require('./config');
+    const {appKey} = require('./config');
     const path = require('path');
     const url = require('url');
 
     const webview = document.querySelector('webview');
 
     ipcRenderer.on('settings', function (event, message) {
-        const {appKey} = config;
-        if (appKey) {
-            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin');
-        } else {
-            webview.loadURL('https://www.google.lk');
-        }
+//        if (appKey) {
+//            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + appKey);
+//        } else {
+//            webview.loadURL('https://www.google.lk');
+//        }
     });
 
     webview.addEventListener('did-fail-load', () => {
         //ipcRenderer.send('onAppStart', {message: 'starting...'})
-        console.log('-----------fail');
-        webview.loadURL(url.format({
-            pathname: path.join(__dirname, 'not-config.html'),
-            protocol: 'file:',
-            slashes: false
-        }));
+        if (appKey) {
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + appKey);
+        } else {
+            webview.loadURL(url.format({
+                pathname: path.join(__dirname, 'not-config.html'),
+                protocol: 'file:',
+                slashes: false
+            }));
+        }
     });
 
     //    webview.addEventListener('pass-key-check', (event, arg) => {

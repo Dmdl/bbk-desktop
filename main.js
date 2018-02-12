@@ -1,7 +1,9 @@
-const {app, BrowserWindow, Menu, ipcMain, ipcRenderer} = require('electron');
+const {app, BrowserWindow, Menu, dialog} = require('electron');
 const url = require('url');
 const path = require('path');
-const config = require('./config');
+const {appPass} = require('./config');
+
+const prompt = require('electron-prompt');
 
 let win;
 
@@ -15,10 +17,45 @@ function createWindow() {
     win.maximize();
     win.show();
     setMainMenu();
-    win.openDevTools();
+    // win.openDevTools();
 }
 
 app.on('ready', createWindow);
+
+function showSettings() {
+    prompt({
+        title: 'Password',
+        label: 'Password:',
+        inputAttrs: {
+            type: 'password'
+        },
+        type: 'input',
+    })
+        .then((r) => {
+            console.log('result', r);
+            if (r === appPass) {
+                showKeyInputDialog()
+            } else {
+                dialog.showErrorBox('Error', 'Incorrect Password');
+            }
+        })
+        .catch(console.error);
+}
+
+function showKeyInputDialog() {
+    prompt({
+        title: 'Settings',
+        label: 'Security Key:',
+        inputAttrs: {
+            type: 'text'
+        },
+        type: 'input',
+    })
+        .then((r) => {
+            console.log('result', r); // null if window was closed, or user clicked Cancel
+        })
+        .catch(console.error);
+}
 
 // ipcMain.on('onAppStart', (event, arg) => {
 //     const {appKey} = config;
@@ -39,7 +76,8 @@ function setMainMenu() {
                     accelerator: 'CmdOrCtrl+H',
                     click() {
                         //console.log('Oh, hi there!');
-                        win.webContents.send('settings', 'text......');
+                        // win.webContents.send('settings', 'text......');
+                        showSettings();
                     }
                 }
             ]
