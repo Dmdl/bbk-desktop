@@ -6,7 +6,7 @@ const config = require('./config');
 let win;
 
 function createWindow() {
-    win = new BrowserWindow({show: false});
+    win = new BrowserWindow({show: false, icon: path.join(__dirname, 'assets/icons/png/64x64.png')});
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'browser.html'),
         protocol: 'file:',
