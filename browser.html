@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Busbooking</title>
+    <link rel="stylesheet" href="browser.css" type="text/css">
+</head>
+
+<body>
+<div>
+    <!--<webview id="webview" src="https://www.busbooking.lk/" autosize minwidth="576" minheight="432"></webview>-->
+    <webview id="webview" src="file://' + __dirname + '/not-found.html" autosize minwidth="576"
+             minheight="432"></webview>
+</div>
+<script>
+    const {ipcRenderer} = require('electron');
+    const config = require('./config');
+    const path = require('path');
+    const url = require('url');
+
+    const webview = document.querySelector('webview');
+
+    ipcRenderer.on('settings', function (event, message) {
+        const {appKey} = config;
+        if (appKey) {
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin');
+        } else {
+            webview.loadURL('https://www.google.lk');
+        }
+    });
+
+    webview.addEventListener('did-fail-load', () => {
+        //ipcRenderer.send('onAppStart', {message: 'starting...'})
+        console.log('-----------fail');
+        webview.loadURL(url.format({
+            pathname: path.join(__dirname, 'not-config.html'),
+            protocol: 'file:',
+            slashes: false
+        }));
+    });
+
+    //    webview.addEventListener('pass-key-check', (event, arg) => {
+    //        console.log(event.channel);
+    //        webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin');
+    //    });
+</script>
+</body>
+</html>
