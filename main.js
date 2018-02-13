@@ -1,23 +1,30 @@
-const {app, BrowserWindow, Menu, dialog} = require('electron');
+const {app, BrowserWindow, Menu, dialog, ipcMain} = require('electron');
 const url = require('url');
 const path = require('path');
-const {appPass} = require('./config');
+const fs = require('fs');
 
 const prompt = require('electron-prompt');
+
+const fileName = './config.json';
+const file = require(fileName);
+const configObj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
 let win;
 
 function createWindow() {
     win = new BrowserWindow({show: false, icon: path.join(__dirname, 'assets/icons/png/64x64.png')});
+    let fileToLoad = 'browser.html';
+    if (!file.appKey) {
+        fileToLoad = 'not-config.html';
+    }
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'browser.html'),
+        pathname: path.join(__dirname, fileToLoad),
         protocol: 'file:',
         slashes: true
     }));
     win.maximize();
     win.show();
     setMainMenu();
-    win.openDevTools();
 }
 
 app.on('ready', createWindow);
@@ -32,9 +39,8 @@ function showSettings() {
         type: 'input',
     })
         .then((r) => {
-            console.log('result', r);
-            if (r === appPass) {
-                showKeyInputDialog()
+            if (r === configObj.appPass) {
+                showKeyInputDialog(r)
             } else {
                 dialog.showErrorBox('Error', 'Incorrect Password');
             }
@@ -42,7 +48,7 @@ function showSettings() {
         .catch(console.error);
 }
 
-function showKeyInputDialog() {
+function showKeyInputDialog(password) {
     prompt({
         title: 'Settings',
         label: 'Security Key:',
@@ -51,20 +57,16 @@ function showKeyInputDialog() {
         },
         type: 'input',
     })
-        .then((r) => {
-            console.log('result', r); // null if window was closed, or user clicked Cancel
+        .then((key) => {
+            file.appKey = key;
+            fs.writeFile(fileName, JSON.stringify(file), function (err) {
+                if (err) return console.log(err);
+                console.log(JSON.stringify(file));
+                console.log('writing to ' + fileName);
+            })
         })
         .catch(console.error);
 }
-
-// ipcMain.on('onAppStart', (event, arg) => {
-//     const {appKey} = config;
-//     if (appKey) {
-//         event.sender.send('pass-key-check', "Hello World!");
-//     } else {
-//
-//     }
-// });
 
 function setMainMenu() {
     const template = [
@@ -75,8 +77,6 @@ function setMainMenu() {
                     label: 'Settings',
                     accelerator: 'CmdOrCtrl+H',
                     click() {
-                        //console.log('Oh, hi there!');
-                        // win.webContents.send('settings', 'text......');
                         showSettings();
                     }
                 }
@@ -85,3 +85,9 @@ function setMainMenu() {
     ];
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
+
+ipcMain.on('refresh', (event, arg) => {
+    let old = win;
+    createWindow();
+    old.close();
+});
