@@ -14,9 +14,11 @@
 </div>
 <script>
     const {ipcRenderer} = require('electron');
-    const {appKey} = require('./config');
     const path = require('path');
     const url = require('url');
+
+    const fs = require('fs');
+    const configObj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
     const webview = document.querySelector('webview');
 
@@ -30,8 +32,8 @@
 
     webview.addEventListener('did-fail-load', () => {
         //ipcRenderer.send('onAppStart', {message: 'starting...'})
-        if (appKey) {
-            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + appKey);
+        if (configObj.appKey) {
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + configObj.appKey);
         } else {
             webview.loadURL(url.format({
                 pathname: path.join(__dirname, 'not-config.html'),

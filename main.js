@@ -17,7 +17,7 @@ function createWindow() {
     win.maximize();
     win.show();
     setMainMenu();
-    // win.openDevTools();
+    win.openDevTools();
 }
 
 app.on('ready', createWindow);
