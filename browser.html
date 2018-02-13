@@ -22,12 +22,11 @@
 
     const webview = document.querySelector('webview');
 
-    ipcRenderer.on('settings', function (event, message) {
-//        if (appKey) {
-//            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + appKey);
-//        } else {
-//            webview.loadURL('https://www.google.lk');
-//        }
+    ipcRenderer.on('key-update', function (event, message) {
+        if (configObj.appKey) {
+            console.log('updating key ....');
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + configObj.appKey);
+        }
     });
 
     webview.addEventListener('did-fail-load', () => {
@@ -42,11 +41,6 @@
             }));
         }
     });
-
-    //    webview.addEventListener('pass-key-check', (event, arg) => {
-    //        console.log(event.channel);
-    //        webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin');
-    //    });
 </script>
 </body>
 </html>

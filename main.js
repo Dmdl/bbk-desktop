@@ -63,6 +63,7 @@ function showKeyInputDialog(password) {
                 if (err) return console.log(err);
                 console.log(JSON.stringify(file));
                 console.log('writing to ' + fileName);
+                win.webContents.send('key-update', 'update');
             })
         })
         .catch(console.error);
