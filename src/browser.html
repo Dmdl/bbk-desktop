@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BBK Control Panel</title>
+    <link rel="stylesheet" href="../styles/browser.css" type="text/css">
+</head>
+
+<body>
+<div>
+    <!--<webview id="webview" src="https://www.busbooking.lk/" autosize minwidth="576" minheight="432"></webview>-->
+    <webview id="webview" src="https://www.123.lk/" autosize minwidth="576"
+             minheight="432"></webview>
+</div>
+<script>
+    const {ipcRenderer} = require('electron');
+    const path = require('path');
+    const url = require('url');
+
+    const fs = require('fs');
+    const configObj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+
+    const webview = document.querySelector('webview');
+
+    ipcRenderer.on('key-update', function (event, message) {
+        if (configObj.appKey) {
+            console.log('updating key ....');
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + configObj.appKey);
+        }
+    });
+
+    webview.addEventListener('did-fail-load', () => {
+        //ipcRenderer.send('onAppStart', {message: 'starting...'})
+        if (configObj.appKey) {
+            webview.loadURL('https://www.busbooking.lk/app/auth/stafflogin?skey=' + configObj.appKey);
+        } else {
+            webview.loadURL(url.format({
+                pathname: path.join(__dirname, 'not-config.html'),
+                protocol: 'file:',
+                slashes: false
+            }));
+        }
+    });
+</script>
+</body>
+</html>

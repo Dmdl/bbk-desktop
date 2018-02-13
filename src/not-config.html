@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Config</title>
+</head>
+<body>
+<h1>App is not configured correctly...</h1>
+
+<button id="refresh-btn">Refresh</button>
+
+<script>
+    const {ipcRenderer} = require('electron');
+    const btn = document.getElementById('refresh-btn');
+    btn.addEventListener('click', refresh);
+
+    function refresh() {
+        console.log('--------------refresh');
+        ipcRenderer.send('refresh', 'refresh from not config');
+    }
+</script>
+</body>
+</html>
