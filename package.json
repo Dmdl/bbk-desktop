@@ -2,7 +2,7 @@
   "name": "bbk-desktop",
   "productName": "bbk-desktop",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "BBK desktop application",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -24,8 +24,7 @@
           "zip"
         ],
         "linux": [
-          "deb",
-          "rpm"
+          "deb"
         ]
       },
       "electronPackagerConfig": {

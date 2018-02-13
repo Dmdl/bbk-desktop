@@ -134,16 +134,16 @@ const fs = require('fs');
 
 const prompt = require('electron-prompt');
 
-const fileName = '../config.json';
+const fileName = './config.json';
 const file = require(fileName);
-const configObj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+const configObj = JSON.parse(fs.readFileSync('src/config.json', 'utf8'));
 
 let win;
 
 // https://github.com/electron-userland/electron-forge
 
 function createWindow() {
-    win = new BrowserWindow({show: false, icon: path.join(__dirname, 'assets/icons/png/64x64.png')});
+    win = new BrowserWindow({show: false, icon: path.join(__dirname, '../assets/icons/png/64x64.png')});
     let fileToLoad = 'browser.html';
     if (!file.appKey) {
         fileToLoad = 'not-config.html';
@@ -190,7 +190,7 @@ function showKeyInputDialog(password) {
     })
         .then((key) => {
             file.appKey = key;
-            fs.writeFile('./config.json', JSON.stringify(file), function (err) {
+            fs.writeFile('./src/config.json', JSON.stringify(file), function (err) {
                 if (err) return console.log(err);
                 console.log(JSON.stringify(file));
                 console.log('writing to ' + fileName);
